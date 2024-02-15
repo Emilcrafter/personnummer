@@ -7,14 +7,14 @@ package personnummer;
  */
 public abstract class CheckableNumber {
 
-    private String number;
+    protected String number;
     protected CharSequence numberSequence;
     private Integer checkDigit;
 
     CheckableNumber(String number) {
         this.number = number;
     }
-    abstract boolean hasValidFormat(String number);
+    abstract boolean hasValidFormat();
     protected abstract boolean hasValidRange();
 
     /**
@@ -71,7 +71,7 @@ public abstract class CheckableNumber {
      * @return true if the number is valid, false otherwise
      */
     public boolean isValid() {
-        if (!hasValidFormat(this.number)) {
+        if (!hasValidFormat()) {
             return false;
         }
         normalizeNumber();

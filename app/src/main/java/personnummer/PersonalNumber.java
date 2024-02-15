@@ -11,13 +11,22 @@ public class PersonalNumber extends CheckableNumber{
     public PersonalNumber(String number) {
         super(number);
     }
-
+    /**
+     * Checks if the number has a valid format.
+     * We assume that numbers with or without a hyphen are valid.
+     * Plus signs are allowed when the date is only 6 digits.
+     * @return true if the number has a valid format
+     */
     @Override
-    protected boolean hasValidFormat(String number) {
+    protected boolean hasValidFormat() {
         Pattern formatPattern = Pattern.compile("^(\\d{6}[-+]?\\d{4})|(\\d{8}-?\\d{4})$");
-        return formatPattern.matcher(number).matches();
+        return formatPattern.matcher(this.number).matches();
     }
 
+    /**
+     * Check that the personal number refers to a valid date.
+     * @return true if the number is valid
+     */
     @Override
     public boolean hasValidRange() {
         DateFormat format = new SimpleDateFormat("yyyyMMdd");

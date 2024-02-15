@@ -7,12 +7,11 @@ public class OrganizationNumber extends CheckableNumber {
     /**
      * Checks if the number has a valid format.
      * We assume that numbers with or without a hyphen are valid.
-     * @param number the number to check
      * @return true if the number has a valid format
      */
-    protected boolean hasValidFormat(String number) {
+    protected boolean hasValidFormat() {
         Pattern formatPattern = Pattern.compile("^(16)?\\d{6}-?\\d{4}$");
-        return formatPattern.matcher(number).matches();
+        return formatPattern.matcher(this.number).matches();
     }
 
     OrganizationNumber(String number) {

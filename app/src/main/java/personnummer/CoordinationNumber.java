@@ -10,6 +10,12 @@ public class CoordinationNumber extends PersonalNumber {
         super(number);
     }
 
+    /**
+     * Checks the particular range rules for coordination numbers.
+     * Basically checks if the number becomes a valid personal number
+     * when 60 is subtracted from the day field.
+     * @return true if the number is valid
+     */
 
     @Override
     public boolean hasValidRange() {
