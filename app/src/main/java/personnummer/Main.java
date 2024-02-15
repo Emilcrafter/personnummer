@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
-        String line = null;
+        String line;
         do {
             try {
                 line = reader.readLine();

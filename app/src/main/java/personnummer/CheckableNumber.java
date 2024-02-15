@@ -5,10 +5,8 @@ import java.util.regex.Pattern;
 public abstract class CheckableNumber {
 
     private String number;
-    private CharSequence extraNumber;
     protected CharSequence numberSequence;
     private Integer checkDigit;
-    protected Pattern formatPattern;
 
     CheckableNumber(String number) {
         this.number = number;
@@ -47,7 +45,7 @@ public abstract class CheckableNumber {
 
     private void disassembleNumber() {
         if(this.number.length() == 12) {
-            this.extraNumber = this.number.subSequence(0, 2);
+            CharSequence extraNumber = this.number.subSequence(0, 2);
             this.numberSequence = this.number.subSequence(2, 11);
             this.checkDigit = Integer.parseInt(this.number.subSequence(11, 12).toString());
             return;
