@@ -15,7 +15,16 @@ public class NumberClassifierTest {
                 "198001262388",
                 "19800126-2388",
                 "200001102383",
-                "20000110-2383"
+                "20000110-2383",
+                "19021214-9819",
+                "190910199827",
+                "191006089807",
+                "192109099180",
+                "4607137454",
+                "194510168885",
+                "900118+9811",
+                "189102279800",
+                "189912299816"
         };
         for (String number : numbers) {
             String result = NumberClassifier.classify(number);
@@ -99,7 +108,8 @@ public void testInvalidNumberClassification(){
             "09107998241",
             "091079-98241",
             "091079+98241",
-            "091079_9824"
+            "091079_9824",
+            "261000-1111",
     };
     for (String number : numbers) {
         String result = NumberClassifier.classify(number);

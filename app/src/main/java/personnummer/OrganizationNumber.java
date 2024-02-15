@@ -20,12 +20,12 @@ public class OrganizationNumber extends CheckableNumber {
     }
 
     /**
-     * Always returns true, since there is no need to check dates
-     * for organization numbers.
-     * @return true
+     * Check that the middle two numbers are at least 20.
+     * @return true if the number is valid
      */
     @Override
     protected boolean hasValidRange() {
-        return true;
+        String middle = this.numberSequence.subSequence(2, 4).toString();
+        return Integer.parseInt(middle) >= 20;
     }
 }

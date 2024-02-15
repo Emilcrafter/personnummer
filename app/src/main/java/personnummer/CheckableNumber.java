@@ -1,7 +1,10 @@
 package personnummer;
 
-import java.util.regex.Pattern;
-
+/**
+ * Abstract class used to represent one of several types of id numbers
+ * used by the Swedish government. Contains implementations of the checks that
+ * are common to all types of numbers, such as the Luhn algorithm.
+ */
 public abstract class CheckableNumber {
 
     private String number;
@@ -15,7 +18,7 @@ public abstract class CheckableNumber {
     protected abstract boolean hasValidRange();
 
     /**
-     * Removes eventual characters from the number, such as hyphens or plus signs.
+     * Removes non-numeric characters from the number, such as hyphens or plus signs.
      */
     private void normalizeNumber() {
         this.number = this.number.replaceAll("[^0-9]", "");
@@ -30,6 +33,12 @@ public abstract class CheckableNumber {
         }
         return digit - 9;
     }
+
+    /**
+     * Computes the correct check digit using the Luhn algorithm,
+     * and then compares it to the present check digit.
+     * @return true if the check digit is valid, false otherwise
+     */
     private boolean hasValidCheckDigit() {
         int sum = 0;
         for (int i = 0; i < 9; i++) {
@@ -43,9 +52,12 @@ public abstract class CheckableNumber {
         return (10 - (sum % 10)) % 10 == checkDigit;
     }
 
+    /**
+     * Separates the significant sequence of numbers from the check digit,
+     * depending on the length of the number.
+     */
     private void disassembleNumber() {
         if(this.number.length() == 12) {
-            CharSequence extraNumber = this.number.subSequence(0, 2);
             this.numberSequence = this.number.subSequence(2, 11);
             this.checkDigit = Integer.parseInt(this.number.subSequence(11, 12).toString());
             return;
@@ -54,6 +66,10 @@ public abstract class CheckableNumber {
         this.checkDigit = Integer.parseInt(this.number.substring(9, 10));
     }
 
+    /**
+     * Runs all the checks on a number to determine if it is a valid instance of the given child class
+     * @return true if the number is valid, false otherwise
+     */
     public boolean isValid() {
         if (!hasValidFormat(this.number)) {
             return false;
