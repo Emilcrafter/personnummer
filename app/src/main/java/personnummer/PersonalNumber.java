@@ -7,32 +7,30 @@ import java.util.regex.Pattern;
 
 public class PersonalNumber extends CheckableNumber{
 
-
     public PersonalNumber(String number) {
         super(number);
-    }
-    /**
-     * Checks if the number has a valid format.
-     * We assume that numbers with or without a hyphen are valid.
-     * Plus signs are allowed when the date is only 6 digits.
-     * @return true if the number has a valid format
-     */
-    @Override
-    protected boolean hasValidFormat() {
-        Pattern formatPattern = Pattern.compile("^(\\d{6}[-+]?\\d{4})|(\\d{8}-?\\d{4})$");
-        return formatPattern.matcher(this.number).matches();
+        addCheck(new FormatCheck(Pattern.compile("^(\\d{6}[-+]?\\d{4})|(\\d{8}[-+]?\\d{4})$")));
+        addCheck(new PersonalNumberRangeCheck());
     }
 
-    /**
-     * Check that the personal number refers to a valid date.
-     * @return true if the number is valid
-     */
+}
+
+/**
+ * Check that the personal number refers to a valid date.
+ */
+class PersonalNumberRangeCheck implements ValidityCheck {
+
     @Override
-    public boolean hasValidRange() {
+    public void failMessage(CheckableNumber number) {
+        System.out.printf("%s does not describe a valid birth date\n", number.number);
+    }
+
+    @Override
+    public boolean isValid(CheckableNumber number) {
         DateFormat format = new SimpleDateFormat("yyyyMMdd");
         format.setLenient(false);
 
-        CharSequence relevantPart = this.numberSequence.subSequence(0,6);
+        CharSequence relevantPart = number.numberSequence.subSequence(0,6);
 
         try {
             format.parse("19" + relevantPart);

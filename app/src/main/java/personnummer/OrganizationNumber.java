@@ -4,27 +4,33 @@ import java.util.regex.Pattern;
 
 public class OrganizationNumber extends CheckableNumber {
 
+    protected String numberType = "organization number";
+
     /**
      * Checks if the number has a valid format.
      * We assume that numbers with or without a hyphen are valid.
      * @return true if the number has a valid format
      */
-    protected boolean hasValidFormat() {
-        Pattern formatPattern = Pattern.compile("^(16)?\\d{6}-?\\d{4}$");
-        return formatPattern.matcher(this.number).matches();
-    }
 
     OrganizationNumber(String number) {
         super(number);
+        addCheck(new FormatCheck(Pattern.compile("^(16)?\\d{6}-?\\d{4}$")));
+        addCheck(new OrganizationNumberRangeCheck());
     }
+}
 
-    /**
-     * Check that the middle two numbers are at least 20.
-     * @return true if the number is valid
-     */
+/**
+ * Check that the middle two numbers are at least 20.
+ **/
+class OrganizationNumberRangeCheck implements ValidityCheck {
+
     @Override
-    protected boolean hasValidRange() {
-        String middle = this.numberSequence.subSequence(2, 4).toString();
-        return Integer.parseInt(middle) >= 20;
+    public void failMessage(CheckableNumber number) {
+        System.out.printf("%s does not have middle two numbers >= 20\n", number.number);
+    }
+    @Override
+    public boolean isValid(CheckableNumber number) {
+        CharSequence middle = number.numberSequence.subSequence(2, 4);
+        return Integer.parseInt(middle.toString()) >= 20;
     }
 }

@@ -3,27 +3,36 @@ package personnummer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.regex.Pattern;
 
-public class CoordinationNumber extends PersonalNumber {
+public class CoordinationNumber extends CheckableNumber {
 
     CoordinationNumber(String number) {
         super(number);
+        addCheck(new FormatCheck(Pattern.compile("^(\\d{6}[-+]?\\d{4})|(\\d{8}[-+]?\\d{4})$")));
+        addCheck(new CoordinationNumberRangeCheck());
     }
 
-    /**
-     * Checks the particular range rules for coordination numbers.
-     * Basically checks if the number becomes a valid personal number
-     * when 60 is subtracted from the day field.
-     * @return true if the number is valid
-     */
+}
+
+/**
+ * Check that the coordination number refers to a valid date (after subtracting 60 from the day).
+ */
+class CoordinationNumberRangeCheck implements ValidityCheck {
 
     @Override
-    public boolean hasValidRange() {
+    public void failMessage(CheckableNumber number) {
+        System.out.printf("%s does not describe a valid birth date\n", number.number);
+    }
+
+    @Override
+    public boolean isValid(CheckableNumber number) {
         DateFormat format = new SimpleDateFormat("yyyyMMdd");
         format.setLenient(false);
-        CharSequence year = this.numberSequence.subSequence(0, 2);
-        CharSequence month = this.numberSequence.subSequence(2, 4);
-        CharSequence day = this.numberSequence.subSequence(4, 6);
+        CharSequence sequence = number.numberSequence;
+        CharSequence year = sequence.subSequence(0, 2);
+        CharSequence month = sequence.subSequence(2, 4);
+        CharSequence day = sequence.subSequence(4, 6);
         int adaptedDay = Integer.parseInt(day.toString()) - 60;
         String adaptedSequence = String.format("%s%s%d", year, month, adaptedDay);
         try {
@@ -38,5 +47,4 @@ public class CoordinationNumber extends PersonalNumber {
         }
         return true;
     }
-
 }

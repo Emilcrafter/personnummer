@@ -1,5 +1,8 @@
 package personnummer;
 
+/**
+ * The number classifier checks the type of given number and returns it as a string.
+ */
 public class NumberClassifier {
     public static String classify(String number) {
         if (new PersonalNumber(number).isValid()) {

@@ -1,5 +1,8 @@
 package personnummer;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * Abstract class used to represent one of several types of id numbers
  * used by the Swedish government. Contains implementations of the checks that
@@ -8,83 +11,108 @@ package personnummer;
 public abstract class CheckableNumber {
 
     protected String number;
+
+    protected String numberType = "UNDEFINED";
+    protected String normalizedNumber;
     protected CharSequence numberSequence;
-    private Integer checkDigit;
+    Integer checkDigit;
+
+
+    protected List<ValidityCheck> validityCheckList = new java.util.ArrayList<>();
 
     CheckableNumber(String number) {
         this.number = number;
+        this.normalizeNumber();
+        this.disassembleNumber();
+        this.addCheck(new LuhnCheck());
     }
-    abstract boolean hasValidFormat();
-    protected abstract boolean hasValidRange();
+
+    protected void addCheck(ValidityCheck validityCheck) {
+        this.validityCheckList.add(validityCheck);
+    }
 
     /**
      * Removes non-numeric characters from the number, such as hyphens or plus signs.
      */
     private void normalizeNumber() {
-        this.number = this.number.replaceAll("[^0-9]", "");
+        this.normalizedNumber = this.number.replaceAll("[^0-9]", "");
     }
 
-    /**
-     * Computes the digit sum of a number n, given that 0 <= n <= 19.
-     */
-    private int digitSum(int digit) {
-        if(digit <= 9) {
-            return digit;
-        }
-        return digit - 9;
-    }
-
-    /**
-     * Computes the correct check digit using the Luhn algorithm,
-     * and then compares it to the present check digit.
-     * @return true if the check digit is valid, false otherwise
-     */
-    private boolean hasValidCheckDigit() {
-        int sum = 0;
-        for (int i = 0; i < 9; i++) {
-            int digit = numberSequence.charAt(i) - '0';
-            if (i % 2 == 0) {
-                digit *= 2;
-            }
-            sum += digitSum(digit);
-        }
-        // Subtracting from nearest multiple of 10
-        return (10 - (sum % 10)) % 10 == checkDigit;
-    }
 
     /**
      * Separates the significant sequence of numbers from the check digit,
      * depending on the length of the number.
      */
     private void disassembleNumber() {
-        if(this.number.length() == 12) {
-            this.numberSequence = this.number.subSequence(2, 11);
-            this.checkDigit = Integer.parseInt(this.number.subSequence(11, 12).toString());
+        if(this.normalizedNumber.length() == 12) {
+            this.numberSequence = this.normalizedNumber.subSequence(2, 11);
+            this.checkDigit = Integer.parseInt(this.normalizedNumber.subSequence(11, 12).toString());
             return;
+        } else if (this.normalizedNumber.length() != 10) {
+            this.normalizedNumber = "0000000000";
         }
-        this.numberSequence = this.number.subSequence(0, 9);
-        this.checkDigit = Integer.parseInt(this.number.substring(9, 10));
+        this.numberSequence = this.normalizedNumber.subSequence(0, 9);
+        this.checkDigit = this.normalizedNumber.charAt(9) - '0';
     }
 
     /**
      * Runs all the checks on a number to determine if it is a valid instance of the given child class
      * @return true if the number is valid, false otherwise
      */
-    public boolean isValid() {
-        if (!hasValidFormat()) {
-            return false;
+    public final boolean isValid(){
+        System.out.printf("Checking if number %s is a valid %s\n", this.number, this.getClass().toString().split("\\.")[1]);
+        boolean didPass = true;
+        for (ValidityCheck check : this.validityCheckList) {
+            if (!check.runCheck(this)){
+                didPass = false;
+            }
         }
-        normalizeNumber();
-        disassembleNumber();
-        boolean validRange = hasValidRange();
-        return validRange && hasValidCheckDigit();
+        return didPass;
+    }
+}
+/**
+ * Computes the correct check digit using the Luhn algorithm,
+ * and then compares it to the present check digit.
+ */
+class LuhnCheck implements ValidityCheck {
+
+    private int luhnSum(CharSequence number) {
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            int digit = number.charAt(i) - '0';
+            if (i % 2 == 0) {
+                digit *= 2;
+            }
+            if (digit > 9) {
+                digit = digit - 9;
+            }
+            sum += digit;
+        }
+        return (10 - (sum % 10)) % 10;
+    }
+    @Override
+    public boolean isValid(CheckableNumber number) {
+        return luhnSum(number.numberSequence) == number.checkDigit;
     }
 
+    @Override
+    public void failMessage(CheckableNumber number) {
+        System.out.printf("Number %s does not pass the Luhn check\n", number.number);
+    }
+}
 
+class FormatCheck implements ValidityCheck {
+    private final Pattern format;
+    FormatCheck(Pattern format) {
+        this.format = format;
+    }
+    @Override
+    public boolean isValid(CheckableNumber number) {
+        return format.matcher(number.number).matches();
+    }
 
-
-
-
-
-
+    @Override
+    public void failMessage(CheckableNumber number) {
+        System.out.printf("Number %s does not match format %s\n", number.number, format);
+    }
 }
