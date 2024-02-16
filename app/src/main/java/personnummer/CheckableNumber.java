@@ -12,9 +12,10 @@ public abstract class CheckableNumber {
 
     protected String number;
 
-    protected String numberType = "UNDEFINED";
     protected String normalizedNumber;
+
     protected CharSequence numberSequence;
+
     Integer checkDigit;
 
 

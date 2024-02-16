@@ -4,13 +4,6 @@ import java.util.regex.Pattern;
 
 public class OrganizationNumber extends CheckableNumber {
 
-    protected String numberType = "organization number";
-
-    /**
-     * Checks if the number has a valid format.
-     * We assume that numbers with or without a hyphen are valid.
-     * @return true if the number has a valid format
-     */
 
     OrganizationNumber(String number) {
         super(number);
