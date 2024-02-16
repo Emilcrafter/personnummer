@@ -18,4 +18,5 @@ You now have the following choices:
   ./run.sh -f test.txt
   ```
 
-The program will then classify the numbers and print the results to the terminal.
+During the runtime of the program, it will log all the failed checks to the console.
+At the end, a list of all personal numbers checked and their individual classifications will follow.

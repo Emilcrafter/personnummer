@@ -18,10 +18,10 @@ public class PersonalNumber extends CheckableNumber{
 /**
  * Check that the personal number refers to a valid date.
  */
-class PersonalNumberRangeCheck implements ValidityCheck {
+class PersonalNumberRangeCheck extends ValidityCheck {
 
     @Override
-    public void failMessage(CheckableNumber number) {
+    protected void failMessage(CheckableNumber number) {
         System.out.printf("%s does not describe a valid birth date\n", number.number);
     }
 

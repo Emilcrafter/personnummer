@@ -1,9 +1,9 @@
 package personnummer;
 
-public interface ValidityCheck {
-    void failMessage(CheckableNumber number);
-    boolean isValid(CheckableNumber number);
-    default boolean runCheck(CheckableNumber number) {
+public abstract class ValidityCheck {
+    protected abstract void failMessage(CheckableNumber number);
+    abstract boolean isValid(CheckableNumber number);
+    final boolean runCheck(CheckableNumber number) {
         boolean result = isValid(number);
         if (!result) {
             failMessage(number);

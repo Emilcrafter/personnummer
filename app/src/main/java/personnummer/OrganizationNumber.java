@@ -15,10 +15,10 @@ public class OrganizationNumber extends CheckableNumber {
 /**
  * Check that the middle two numbers are at least 20.
  **/
-class OrganizationNumberRangeCheck implements ValidityCheck {
+class OrganizationNumberRangeCheck extends ValidityCheck {
 
     @Override
-    public void failMessage(CheckableNumber number) {
+    protected void failMessage(CheckableNumber number) {
         System.out.printf("%s does not have middle two numbers >= 20\n", number.number);
     }
     @Override

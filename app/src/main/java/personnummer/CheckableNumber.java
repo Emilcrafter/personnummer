@@ -75,7 +75,7 @@ public abstract class CheckableNumber {
  * Computes the correct check digit using the Luhn algorithm,
  * and then compares it to the present check digit.
  */
-class LuhnCheck implements ValidityCheck {
+class LuhnCheck extends ValidityCheck {
 
     private int luhnSum(CharSequence number) {
         int sum = 0;
@@ -97,12 +97,12 @@ class LuhnCheck implements ValidityCheck {
     }
 
     @Override
-    public void failMessage(CheckableNumber number) {
+    protected void failMessage(CheckableNumber number) {
         System.out.printf("Number %s does not pass the Luhn check\n", number.number);
     }
 }
 
-class FormatCheck implements ValidityCheck {
+class FormatCheck extends ValidityCheck {
     private final Pattern format;
     FormatCheck(Pattern format) {
         this.format = format;
@@ -113,7 +113,7 @@ class FormatCheck implements ValidityCheck {
     }
 
     @Override
-    public void failMessage(CheckableNumber number) {
+    protected void failMessage(CheckableNumber number) {
         System.out.printf("Number %s does not match format %s\n", number.number, format);
     }
 }
